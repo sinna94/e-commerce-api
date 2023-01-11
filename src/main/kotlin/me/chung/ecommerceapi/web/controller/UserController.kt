@@ -2,6 +2,7 @@ package me.chung.ecommerceapi.web.controller
 
 import me.chung.ecommerceapi.service.UserService
 import me.chung.ecommerceapi.web.dto.SignUpDto
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -16,7 +17,8 @@ class UserController(
     @PostMapping("/signup")
     fun signUp(
         @RequestBody body: SignUpDto
-    ) {
-        userService.signUp(body)
+    ): ResponseEntity<Boolean> {
+        val result = userService.signUp(body)
+        return ResponseEntity.ok(result)
     }
 }

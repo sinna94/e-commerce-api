@@ -31,9 +31,6 @@ class User(
     val password: String,
 
     @Column(nullable = false)
-    val salt: String,
-
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     val role: Role
 
