@@ -7,9 +7,7 @@ import me.chung.ecommerceapi.domain.address.Address
 @Entity
 @Table(
     name = "user", uniqueConstraints = [
-        UniqueConstraint(columnNames = arrayOf("loginId")),
-        UniqueConstraint(columnNames = arrayOf("phone")),
-        UniqueConstraint(columnNames = arrayOf("email")),
+        UniqueConstraint(name = "user_uq", columnNames = arrayOf("loginId")),
     ]
 )
 class User(
@@ -39,4 +37,9 @@ class User(
     @Enumerated(EnumType.STRING)
     val role: Role
 
-): BaseEntity()
+): BaseEntity(){
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id", nullable = false)
+    var id: Long? = null
+}
