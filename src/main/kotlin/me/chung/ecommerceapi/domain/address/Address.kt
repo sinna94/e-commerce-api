@@ -8,7 +8,7 @@ import me.chung.ecommerceapi.domain.user.User
 @Table(name = "address", uniqueConstraints = [UniqueConstraint(name = "address_uq", columnNames = ["user_id", "address"])])
 class Address(
     @ManyToOne(targetEntity = User::class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", foreignKey = ForeignKey(name = "fk_user_id"))
     val user: User,
 
     @Column(length = 20)

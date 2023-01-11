@@ -24,7 +24,7 @@ class User(
     val phone: String,
 
     @Column
-    @OneToMany
+    @OneToMany(mappedBy = "user")
     val address: List<Address>?,
 
     @Column(nullable = false)
