@@ -4,8 +4,11 @@ import me.chung.ecommerceapi.domain.user.Role
 import me.chung.ecommerceapi.domain.user.User
 import me.chung.ecommerceapi.domain.user.UserRepos
 import me.chung.ecommerceapi.web.dto.SignUpDto
+import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ResponseStatusException
 import java.lang.IllegalArgumentException
 
 
@@ -18,7 +21,7 @@ class UserService(
         val (loginId, name, email, phone, password) = body
 
         if(userRepos.findByLoginId(loginId) != null){
-            throw IllegalArgumentException("loginId is duplicated")
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "loginId is duplicated")
         }
 
         val encodedPassword = passwordEncoder.encode(password)

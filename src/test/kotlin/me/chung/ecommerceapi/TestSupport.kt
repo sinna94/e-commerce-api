@@ -1,19 +1,18 @@
 package me.chung.ecommerceapi
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import me.chung.ecommerceapi.config.RestDocsConfig
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
-import org.springframework.restdocs.RestDocumentationExtension
-import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler
+import org.springframework.http.ResponseEntity
+import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.context.TestConstructor
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.web.ErrorResponse
 import java.net.URI
 
 @SpringBootTest(
@@ -21,21 +20,13 @@ import java.net.URI
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @AutoConfigureMockMvc
-@Import(RestDocsConfig::class)
-@ExtendWith(RestDocumentationExtension::class)
 abstract class TestSupport {
-    companion object {
-        protected const val CONSTRAINTS = "constraints"
-    }
-
-    @Autowired
-    protected lateinit var restDocs: RestDocumentationResultHandler
 
     @Autowired
     private lateinit var mockMvc: MockMvc
 
     @Autowired
-    private lateinit var objectMapper: ObjectMapper
+    lateinit var objectMapper: ObjectMapper
 
     fun parseJson(value: Any): String {
         return objectMapper.writeValueAsString(value)
@@ -49,5 +40,22 @@ abstract class TestSupport {
             builder.content(parseJson(body))
         }
         return mockMvc.perform(builder)
+    }
+
+    fun toErrorResponse(response: MockHttpServletResponse): ErrorResponse {
+        return toErrorResponse(response.contentAsString)
+    }
+
+    fun toErrorResponse(json: String): ErrorResponse {
+        return objectMapper.readValue(json, ErrorResponse::class.java)
+    }
+
+    final inline fun <reified T> toResponseEntity(response: MockHttpServletResponse): ResponseEntity<T> {
+        return toResponseEntity(response.contentAsString)
+    }
+
+    final inline fun <reified T> toResponseEntity(json: String): ResponseEntity<T> {
+        val typeReference = object : TypeReference<ResponseEntity<T>>() {}
+        return objectMapper.readValue(json, typeReference)
     }
 }
