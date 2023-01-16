@@ -6,13 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.context.TestConstructor
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.web.ErrorResponse
 import java.net.URI
 
 @SpringBootTest(
@@ -42,20 +40,12 @@ abstract class TestSupport {
         return mockMvc.perform(builder)
     }
 
-    fun toErrorResponse(response: MockHttpServletResponse): ErrorResponse {
-        return toErrorResponse(response.contentAsString)
+    final inline fun <reified T> toResult(response: MockHttpServletResponse): T {
+        return toResult(response.contentAsString)
     }
 
-    fun toErrorResponse(json: String): ErrorResponse {
-        return objectMapper.readValue(json, ErrorResponse::class.java)
-    }
-
-    final inline fun <reified T> toResponseEntity(response: MockHttpServletResponse): ResponseEntity<T> {
-        return toResponseEntity(response.contentAsString)
-    }
-
-    final inline fun <reified T> toResponseEntity(json: String): ResponseEntity<T> {
-        val typeReference = object : TypeReference<ResponseEntity<T>>() {}
+    final inline fun <reified T> toResult(json: String): T {
+        val typeReference = object : TypeReference<T>() {}
         return objectMapper.readValue(json, typeReference)
     }
 }

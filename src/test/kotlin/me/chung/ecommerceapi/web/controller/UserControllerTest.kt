@@ -38,8 +38,8 @@ class UserControllerTest(
         val response = performPost("/v1/user/signup", body).andReturn().response
         assertThat(response.status)
             .isEqualTo(200)
-        val responseEntity = toResponseEntity<Boolean>(response)
-
+        val result = toResult<Boolean>(response)
+        assertTrue(result)
 
         val users = userRepos.findAll()
         assertThat(users)
@@ -81,5 +81,6 @@ class UserControllerTest(
         val response = performPost("/v1/user/signup", body).andReturn().response
         assertThat(response.status)
             .isEqualTo(HttpStatus.BAD_REQUEST.value())
+
     }
 }
