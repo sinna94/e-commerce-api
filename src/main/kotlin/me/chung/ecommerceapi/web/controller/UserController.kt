@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/v1/user")
 class UserController(
-    private val userService: UserService
+  private val userService: UserService
 ) {
 
-    @PostMapping("/signup")
-    fun signUp(
-        @RequestBody body: SignUpDto
-    ): ResponseEntity<Boolean> {
-        val result = userService.signUp(body)
-        return ResponseEntity.ok(result)
-    }
+  @PostMapping("/signup")
+  fun signUp(
+    @RequestBody body: SignUpDto
+  ): ResponseEntity<Boolean> {
+    val result = userService.signUp(body)
+    return ResponseEntity.ok(result)
+  }
 }

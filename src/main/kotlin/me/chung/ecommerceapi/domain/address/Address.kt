@@ -7,18 +7,18 @@ import me.chung.ecommerceapi.domain.user.User
 @Entity
 @Table(name = "address", uniqueConstraints = [UniqueConstraint(name = "address_uq", columnNames = ["user_id", "address"])])
 class Address(
-    @ManyToOne(targetEntity = User::class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", foreignKey = ForeignKey(name = "fk_user_id"))
-    val user: User,
+  @ManyToOne(targetEntity = User::class, fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", foreignKey = ForeignKey(name = "fk_user_id"))
+  val user: User,
 
-    @Column(length = 20)
-    val name: String,
+  @Column(length = 20)
+  val name: String,
 
-    @Column(length = 100)
-    val address: String,
-): BaseEntity(){
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "address_id", nullable = false)
-    var id: Long? = null
+  @Column(length = 100)
+  val address: String,
+) : BaseEntity() {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "address_id", nullable = false)
+  var id: Long? = null
 }

@@ -13,31 +13,31 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 class ExceptionHandler : ResponseEntityExceptionHandler() {
 
-    @ExceptionHandler(value = [ResponseStatusException::class])
-    fun handleResponseStatusException(e: ResponseStatusException): ResponseEntity<ErrorResponse> {
-        if (logger.isInfoEnabled) {
-            logger.info("", e)
-        }
-
-        val errorResponse = ErrorResponse.create(e, e.statusCode, e.message)
-
-        return ResponseEntity
-            .status(e.statusCode)
-            .body(errorResponse)
+  @ExceptionHandler(value = [ResponseStatusException::class])
+  fun handleResponseStatusException(e: ResponseStatusException): ResponseEntity<ErrorResponse> {
+    if (logger.isInfoEnabled) {
+      logger.info("", e)
     }
 
-    @ExceptionHandler(value = [Exception::class])
-    fun handleException(e: RuntimeException, request: WebRequest): ResponseEntity<ErrorResponse> {
-        if (logger.isInfoEnabled) {
-            logger.info("", e)
-        }
+    val errorResponse = ErrorResponse.create(e, e.statusCode, e.message)
 
-        val rootCause = ExceptionUtils.getRootCause(e)
+    return ResponseEntity
+      .status(e.statusCode)
+      .body(errorResponse)
+  }
 
-        val errorResponse = ErrorResponse.create(e, HttpStatus.INTERNAL_SERVER_ERROR, rootCause.message ?: "")
-
-        return ResponseEntity
-            .internalServerError()
-            .body(errorResponse)
+  @ExceptionHandler(value = [Exception::class])
+  fun handleException(e: RuntimeException, request: WebRequest): ResponseEntity<ErrorResponse> {
+    if (logger.isInfoEnabled) {
+      logger.info("", e)
     }
+
+    val rootCause = ExceptionUtils.getRootCause(e)
+
+    val errorResponse = ErrorResponse.create(e, HttpStatus.INTERNAL_SERVER_ERROR, rootCause.message ?: "")
+
+    return ResponseEntity
+      .internalServerError()
+      .body(errorResponse)
+  }
 }

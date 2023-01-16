@@ -19,20 +19,18 @@ class SecurityConfig {
 //        }
 //    }
 
+  @Bean
+  fun filterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
+    return httpSecurity.csrf()
+      .disable()
+      .authorizeHttpRequests { auth ->
+        auth.requestMatchers("/v1/user/signup").permitAll()
+          .anyRequest().authenticated()
+      }.build()
+  }
 
-    @Bean
-    fun filterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
-        return httpSecurity.csrf()
-            .disable()
-            .authorizeHttpRequests { auth ->
-                auth.requestMatchers("/v1/user/signup").permitAll()
-                    .anyRequest().authenticated()
-            }.build()
-    }
-
-    @Bean
-    fun passwordEncoder(): BCryptPasswordEncoder {
-        return BCryptPasswordEncoder()
-    }
+  @Bean
+  fun passwordEncoder(): BCryptPasswordEncoder {
+    return BCryptPasswordEncoder()
+  }
 }
-
