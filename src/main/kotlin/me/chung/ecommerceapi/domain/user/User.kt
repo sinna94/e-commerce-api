@@ -3,6 +3,8 @@ package me.chung.ecommerceapi.domain.user
 import jakarta.persistence.*
 import me.chung.ecommerceapi.domain.BaseEntity
 import me.chung.ecommerceapi.domain.address.Address
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
 
 @Entity
 @Table(
@@ -29,15 +31,42 @@ class User(
   val address: List<Address>?,
 
   @Column(nullable = false)
-  val password: String,
+  private val password: String,
 
-  @Column(nullable = false)
   @Enumerated(EnumType.STRING)
-  val role: Role
+  val role: Role,
 
-) : BaseEntity() {
+) : UserDetails, BaseEntity() {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "user_id", nullable = false)
   var id: Long? = null
+
+  override fun getAuthorities(): List<SimpleGrantedAuthority> {
+    return listOf(SimpleGrantedAuthority(role.name))
+  }
+
+  override fun getUsername(): String {
+    return loginId
+  }
+
+  override fun getPassword(): String {
+    return password
+  }
+
+  override fun isAccountNonExpired(): Boolean {
+    return true
+  }
+
+  override fun isAccountNonLocked(): Boolean {
+    return true
+  }
+
+  override fun isCredentialsNonExpired(): Boolean {
+    return true
+  }
+
+  override fun isEnabled(): Boolean {
+    return true
+  }
 }

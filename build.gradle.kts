@@ -37,6 +37,9 @@ dependencies {
   testImplementation("org.springframework.security:spring-security-test")
   implementation("org.mariadb.jdbc:mariadb-java-client:3.0.6")
   testRuntimeOnly("com.h2database:h2")
+  implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+  runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+  implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
 }
 
 tasks.withType<KotlinCompile> {

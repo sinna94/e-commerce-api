@@ -31,7 +31,7 @@ abstract class TestSupport {
   }
 
   fun performPost(url: String, body: Any? = null): ResultActions {
-    val builder = MockMvcRequestBuilders.post(URI.create("/v1/user/signup"))
+    val builder = MockMvcRequestBuilders.post(URI.create(url))
       .contentType(MediaType.APPLICATION_JSON)
 
     body?.let {

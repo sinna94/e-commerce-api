@@ -10,6 +10,15 @@ spring:
     database-platform: org.hibernate.dialect.MariaDB103Dialect
     hibernate:
       ddl-auto: create
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8083/auth/issuer
+          jwk-set-uri: http://localhost:8083/auth/jwk
+          jws-algorithms:
+            - RS512
+
 server:
   port: 8080
 

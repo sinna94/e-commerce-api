@@ -4,7 +4,8 @@ import me.chung.ecommerceapi.TestSupport
 import me.chung.ecommerceapi.domain.user.Role
 import me.chung.ecommerceapi.domain.user.User
 import me.chung.ecommerceapi.domain.user.UserRepos
-import me.chung.ecommerceapi.web.dto.SignUpDto
+import me.chung.ecommerceapi.web.dto.AuthenticationResponse
+import me.chung.ecommerceapi.web.dto.RegisterRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -13,7 +14,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
-class UserControllerTest(
+class AuthControllerTest(
   private val userRepos: UserRepos,
   private val passwordEncoder: BCryptPasswordEncoder,
 ) : TestSupport() {
@@ -25,9 +26,9 @@ class UserControllerTest(
 
   @Test
   @DisplayName("회원 가입 테스트")
-  fun signUpTest() {
+  fun registerTest() {
 
-    val body = SignUpDto(
+    val body = RegisterRequest(
       "user1",
       "홍길동",
       "example@google.com",
@@ -35,11 +36,11 @@ class UserControllerTest(
       "password"
     )
 
-    val response = performPost("/v1/user/signup", body).andReturn().response
+    val response = performPost("/api/v1/auth/register", body).andReturn().response
     assertThat(response.status)
       .isEqualTo(200)
-    val result = toResult<Boolean>(response)
-    assertTrue(result)
+    val result = toResult<AuthenticationResponse>(response)
+    println(result.token)
 
     val users = userRepos.findAll()
     assertThat(users)
@@ -56,7 +57,7 @@ class UserControllerTest(
 
   @Test
   @DisplayName("중복된 loginId 로 회원 가입 테스트")
-  fun signUpWithDuplicatedLoginIdTest() {
+  fun registerWithDuplicatedLoginIdTest() {
     userRepos.save(
       User(
         "user1",
@@ -69,7 +70,7 @@ class UserControllerTest(
       )
     )
 
-    val body = SignUpDto(
+    val body = RegisterRequest(
       "user1",
       "홍길동",
       "example@google.com",
@@ -77,7 +78,7 @@ class UserControllerTest(
       "password"
     )
 
-    val response = performPost("/v1/user/signup", body).andReturn().response
+    val response = performPost("/api/v1/auth/register", body).andReturn().response
     assertThat(response.status)
       .isEqualTo(HttpStatus.BAD_REQUEST.value())
   }
