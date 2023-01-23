@@ -1,6 +1,7 @@
 package me.chung.ecommerceapi.web.controller
 
 import me.chung.ecommerceapi.TestSupport
+import me.chung.ecommerceapi.config.JwtService
 import me.chung.ecommerceapi.domain.user.Role
 import me.chung.ecommerceapi.domain.user.User
 import me.chung.ecommerceapi.domain.user.UserRepos
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 class AuthControllerTest(
   private val userRepos: UserRepos,
   private val passwordEncoder: BCryptPasswordEncoder,
+  private val jwtService: JwtService,
 ) : TestSupport() {
 
   @BeforeEach
@@ -40,16 +42,15 @@ class AuthControllerTest(
     assertThat(response.status)
       .isEqualTo(200)
     val result = toResult<AuthenticationResponse>(response)
-    println(result.token)
 
-    val users = userRepos.findAll()
-    assertThat(users)
-      .hasSize(1)
+    val user = userRepos.findAll().first()
+    assertTrue(jwtService.isTokenValid(result.token, user))
+    assertThat(user)
       .extracting("loginId")
-      .isEqualTo(listOf("user1"))
+      .isEqualTo("user1")
 
     // 비밀번호 암호화 확인
-    val encodedPassword = users.first().password
+    val encodedPassword = user.password
     assertThat(encodedPassword)
       .isNotEqualTo("password")
     assertTrue(passwordEncoder.matches("password", encodedPassword))
@@ -80,6 +81,6 @@ class AuthControllerTest(
 
     val response = performPost("/api/v1/auth/register", body).andReturn().response
     assertThat(response.status)
-      .isEqualTo(HttpStatus.BAD_REQUEST.value())
+      .isEqualTo(HttpStatus.CONFLICT.value())
   }
 }
