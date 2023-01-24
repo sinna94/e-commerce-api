@@ -31,6 +31,7 @@ dependencies {
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.0.2")
   implementation("org.springdoc:springdoc-openapi-starter-common:2.0.2")
+  implementation("org.springdoc:springdoc-openapi-security:1.6.14")
 //    implementation("org.liquibase:liquibase-core")
   developmentOnly("org.springframework.boot:spring-boot-devtools")
   testImplementation("org.springframework.boot:spring-boot-starter-test")

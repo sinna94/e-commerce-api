@@ -2,7 +2,8 @@ package me.chung.ecommerceapi.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
@@ -29,11 +30,7 @@ class SecurityConfig(
       .authorizeHttpRequests { auth ->
         auth
           .requestMatchers(
-            HttpMethod.GET,
-            "/swagger-ui/**", "/v3/api-docs/**"
-          ).permitAll()
-          .requestMatchers(
-            "/api/v1/auth/**",
+            "/swagger-ui/**", "/v3/api-docs/**", "/api/v1/auth/**",
           ).permitAll()
           .anyRequest()
           .authenticated()
@@ -43,7 +40,12 @@ class SecurityConfig(
           .and()
           .authenticationProvider(authenticationProvider())
           .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
-//          .hasAnyRole(Role.MEMBER.name, Role.GUEST.name, Role.SELLER.name)
+      }
+      .exceptionHandling {
+        it.authenticationEntryPoint { _, res, _ ->
+          res.status = HttpStatus.UNAUTHORIZED.value()
+          res.contentType = MediaType.APPLICATION_JSON.type
+        }
       }
     return httpSecurity.build()
   }
