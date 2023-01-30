@@ -1,4 +1,4 @@
-name: Docker
+name: Deploy
 env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
@@ -7,7 +7,7 @@ env:
 
 on:
   push:
-    branches: [develop]
+    branches: [ develop ]
 
 jobs:
   build:
@@ -62,3 +62,27 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: Deploy Prod use SCP
+        uses: appleboy/scp-action@master
+        with:
+          username: opc
+          host: ${{ secrets.HOST }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          source: "build/libs/e-commerce-api.jar,run.sh"
+          target: "~/"
+      - name: Ssh Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          username: opc
+          host: ${{ secrets.HOST }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          script_stop: true
+          script: chmod +x ./run.sh
+      - name: Ssh Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          username: opc
+          host: ${{ secrets.HOST }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          script_stop: true
+          script: ./run.sh
