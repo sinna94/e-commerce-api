@@ -19,6 +19,6 @@ class Address(
 ) : BaseEntity() {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "address_id", nullable = false)
+  @Column(nullable = false)
   var id: Long? = null
 }

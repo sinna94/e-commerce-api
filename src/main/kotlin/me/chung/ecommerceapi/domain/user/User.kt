@@ -23,23 +23,24 @@ class User(
   @Column(length = 100, nullable = false)
   val email: String,
 
-  @Column(nullable = false)
+  @Column(length = 11, nullable = false)
   val phone: String,
 
   @Column
   @OneToMany(mappedBy = "user")
   val address: List<Address>?,
 
-  @Column(nullable = false)
+  @Column(length = 100, nullable = false)
   private val password: String,
 
   @Enumerated(EnumType.STRING)
+  @Transient
   val role: Role,
 
 ) : UserDetails, BaseEntity() {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "user_id", nullable = false)
+  @Column(nullable = false)
   var id: Long? = null
 
   override fun getAuthorities(): List<SimpleGrantedAuthority> {
