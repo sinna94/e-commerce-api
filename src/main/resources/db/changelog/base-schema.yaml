@@ -78,3 +78,87 @@ databaseChangeLog:
               - column:
                   name: updated_at
                   type: dateTime
+  - changeSet:
+      id: item
+      author: chunghyun
+      changes:
+        - createTable:
+            tableName: item
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: decimal
+                  constraints:
+                    nullable: false
+              - column:
+                  name: contents
+                  type: clob
+              - column:
+                  name: seller
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_seller
+                    references: user(id)
+              - column:
+                  name: stop_selling
+                  type: boolean
+              - column:
+                  name: created_at
+                  type: dateTime
+              - column:
+                  name: updated_at
+                  type: dateTime
+        - createTable:
+            tableName: item_option
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: item_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_item
+                    references: item(id)
+              - column:
+                  name: option_title
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: option_description
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: option_price
+                  type: decimal
+              - column:
+                  name: parent_option_id
+                  type: bigint
+              - column:
+                  name: created_at
+                  type: dateTime
+              - column:
+                  name: updated_at
+                  type: dateTime
+        - addUniqueConstraint:
+            tableName: item_option
+            constraintName: uk_item_option
+            columnNames: item_id, option_title, option_description
