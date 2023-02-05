@@ -10,6 +10,7 @@ import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.context.TestConstructor
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import java.net.URI
 
@@ -30,12 +31,29 @@ abstract class TestSupport {
     return objectMapper.writeValueAsString(value)
   }
 
-  fun performPost(url: String, body: Any? = null): ResultActions {
-    val builder = MockMvcRequestBuilders.post(URI.create(url))
+  fun performGet(url: String, params: Map<String, String>? = null): ResultActions {
+    var builder = getBuilder(MockMvcRequestBuilders::get, url)
+
+    params?.forEach { (key, value) ->
+      builder = builder.param(key, value)
+    }
+
+    return mockMvc.perform(builder)
+  }
+
+  private fun getBuilder(
+    method: (URI) -> MockHttpServletRequestBuilder,
+    url: String,
+  ): MockHttpServletRequestBuilder {
+    return method(URI.create(url))
       .contentType(MediaType.APPLICATION_JSON)
+  }
+
+  fun performPost(url: String, body: Any? = null): ResultActions {
+    var builder = getBuilder(MockMvcRequestBuilders::post, url)
 
     body?.let {
-      builder.content(parseJson(body))
+      builder = builder.content(parseJson(body))
     }
     return mockMvc.perform(builder)
   }
