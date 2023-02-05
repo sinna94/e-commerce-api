@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: base-schema
+      id: base-1
       author: chunghyun
       changes:
         - createTable:
@@ -79,7 +79,7 @@ databaseChangeLog:
                   name: updated_at
                   type: dateTime
   - changeSet:
-      id: item
+      id: base-2
       author: chunghyun
       changes:
         - createTable:
@@ -167,30 +167,7 @@ databaseChangeLog:
       author: chunghyun
       changes:
         - createTable:
-            tableName: category_level_1
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: name
-                  type: varchar(100)
-                  constraints:
-                    nullable: false
-                    unique: true
-                    uniqueConstraintName: category_level1_uq
-              - column:
-                  name: created_at
-                  type: dateTime
-              - column:
-                  name: updated_at
-                  type: dateTime
-        - createTable:
-            tableName: category_level_2
+            tableName: category
             columns:
               - column:
                   name: id
@@ -205,11 +182,19 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: category_level_1
-                  type: bigint
+                  name: category_level
+                  type: tinyint
+              - column:
+                  name: is_leaf
+                  type: boolean
+              - column:
+                  name: order
+                  type: tinyint
                   constraints:
-                    foreignKeyName: fk_category_level_1
-                    references: category_level_1(id)
+                    nullable: false
+              - column:
+                  name: parent_id
+                  type: bigint
               - column:
                   name: created_at
                   type: dateTime
@@ -217,46 +202,15 @@ databaseChangeLog:
                   name: updated_at
                   type: dateTime
         - addUniqueConstraint:
-            tableName: category_level_2
-            constraintName: category_level2_uq
-            columnNames: name, category_level_1
-        - createTable:
-            tableName: category_level_3
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: name
-                  type: varchar(100)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: category_level_2
-                  type: bigint
-                  constraints:
-                    foreignKeyName: fk_category_level_2
-                    references: category_level_2(id)
-              - column:
-                  name: created_at
-                  type: dateTime
-              - column:
-                  name: updated_at
-                  type: dateTime
-        - addUniqueConstraint:
-            tableName: category_level_3
-            constraintName: category_level3_uq
-            columnNames: name, category_level_2
+            tableName: category
+            constraintName: category_uk
+            columnNames: name, category_level
         - addColumn:
             tableName: item
             columns:
               - column:
-                  name: category_level_3_id
+                  name: category_id
                   type: bigint
                   constraints:
-                    foreignKeyName: fk_category_level_3
-                    references: category_level_3(id)
+                    foreignKeyName: fk_category
+                    references: category(id)
