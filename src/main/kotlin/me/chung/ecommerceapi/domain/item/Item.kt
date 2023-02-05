@@ -2,6 +2,7 @@ package me.chung.ecommerceapi.domain.item
 
 import jakarta.persistence.*
 import me.chung.ecommerceapi.domain.BaseEntity
+import me.chung.ecommerceapi.domain.category.CategoryLevel3
 import me.chung.ecommerceapi.domain.user.User
 import java.math.BigInteger
 
@@ -25,6 +26,10 @@ class Item(
 
   @Column
   var stopSelling: Boolean?,
+
+  @ManyToOne(targetEntity = CategoryLevel3::class, fetch = FetchType.LAZY)
+  @JoinColumn(name = "category_level_3_id", foreignKey = ForeignKey(name = "fk_category_level_3"))
+  val categoryLevel3: CategoryLevel3,
 
 ) : BaseEntity() {
   @Id

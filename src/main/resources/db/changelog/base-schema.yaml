@@ -162,3 +162,101 @@ databaseChangeLog:
             tableName: item_option
             constraintName: uk_item_option
             columnNames: item_id, option_title, option_description
+  - changeSet:
+      id: category
+      author: chunghyun
+      changes:
+        - createTable:
+            tableName: category_level_1
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: category_level1_uq
+              - column:
+                  name: created_at
+                  type: dateTime
+              - column:
+                  name: updated_at
+                  type: dateTime
+        - createTable:
+            tableName: category_level_2
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category_level_1
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_category_level_1
+                    references: category_level_1(id)
+              - column:
+                  name: created_at
+                  type: dateTime
+              - column:
+                  name: updated_at
+                  type: dateTime
+        - addUniqueConstraint:
+            tableName: category_level_2
+            constraintName: category_level2_uq
+            columnNames: name, category_level_1
+        - createTable:
+            tableName: category_level_3
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category_level_2
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_category_level_2
+                    references: category_level_2(id)
+              - column:
+                  name: created_at
+                  type: dateTime
+              - column:
+                  name: updated_at
+                  type: dateTime
+        - addUniqueConstraint:
+            tableName: category_level_3
+            constraintName: category_level3_uq
+            columnNames: name, category_level_2
+        - addColumn:
+            tableName: item
+            columns:
+              - column:
+                  name: category_level_3_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_category_level_3
+                    references: category_level_3(id)
