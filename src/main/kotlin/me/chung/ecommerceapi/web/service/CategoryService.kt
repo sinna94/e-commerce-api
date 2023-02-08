@@ -1,6 +1,8 @@
 package me.chung.ecommerceapi.web.service
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import io.swagger.v3.oas.annotations.media.Schema
+import me.chung.ecommerceapi.domain.category.CategoryRelation
 import me.chung.ecommerceapi.domain.category.CategoryRepos
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -12,25 +14,39 @@ class CategoryService(
 ) {
 
   companion object {
-    const val TOP_LEVEL: Short = 1
+    const val TOP_LEVEL: Short = 0
   }
 
-  fun getTopLevelCategories(): List<CategoryResponse> {
-    return findCategoryResponseByLevel(TOP_LEVEL)
-  }
+  fun getCategories(categoryId: Long?): List<CategoryResponse> {
+    if (categoryId == null) {
+      return findTopLevelCategoryResponse()
+    }
 
-  private fun findCategoryResponseByLevel(categoryLevel: Short): List<CategoryResponse> {
-    return categoryRepos.findByCategoryLevelAndOrderByOrder(categoryLevel)
-      .groupBy({ c ->
-        c.parentId = null
-        c
-      }) { it.parentId }
-      .entries
+    val categoryOptional = categoryRepos.existsById(categoryId)
+
+    if (!categoryOptional) {
+      throw IllegalArgumentException("invalid category id : $categoryId")
+    }
+
+    return categoryRepos.findByCategoryRelationById(categoryId)
       .map {
-        val (id, name, level, isLeaf, order, _) = it.key
-        CategoryResponse(id, name, level, isLeaf, order, it.value.filterNotNull())
+        val (id, name, level, isLeaf, order) = it
+        CategoryResponse(id, name, level, isLeaf, order)
       }
   }
+
+  private fun findTopLevelCategoryResponse(): List<CategoryResponse> {
+    return toCategoryResponseList(categoryRepos.findByCategoryLevelAndOrderByOrder(TOP_LEVEL))
+  }
+
+  private fun toCategoryResponseList(categoryRelations: Collection<CategoryRelation>) =
+    categoryRelations
+      .groupBy({ it }) { it.parentId }
+      .entries
+      .map {
+        val (id, name, level, isLeaf, order) = it.key
+        CategoryResponse(id, name, level, isLeaf, order, it.value.filterNotNull())
+      }
 }
 
 /**
@@ -47,6 +63,7 @@ class CategoryService(
  *
  * @param categories 하위 카테고리 ID 리스트
  */
+@Schema(description = "카테고리 정보")
 data class CategoryResponse(
   val id: Long,
   val name: String,
@@ -54,5 +71,5 @@ data class CategoryResponse(
   @JsonProperty("isLeaf")
   val isLeaf: Boolean,
   val order: Short,
-  val categories: List<Long>,
+  val categories: List<Long>? = null,
 )
