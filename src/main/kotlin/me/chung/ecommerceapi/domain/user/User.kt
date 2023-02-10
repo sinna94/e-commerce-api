@@ -41,7 +41,7 @@ class User(
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(nullable = false)
-  var id: Long? = null
+  var id: Long = 0L
 
   override fun getAuthorities(): List<SimpleGrantedAuthority> {
     return listOf(SimpleGrantedAuthority(role.name))

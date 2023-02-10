@@ -2,10 +2,12 @@ package me.chung.ecommerceapi.web.service
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import io.swagger.v3.oas.annotations.media.Schema
+import me.chung.ecommerceapi.domain.category.Category
 import me.chung.ecommerceapi.domain.category.CategoryRelation
 import me.chung.ecommerceapi.domain.category.CategoryRepos
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import kotlin.jvm.optionals.getOrNull
 
 @Service
 @Transactional
@@ -22,9 +24,9 @@ class CategoryService(
       return findTopLevelCategoryResponse()
     }
 
-    val categoryOptional = categoryRepos.existsById(categoryId)
+    val hasCategory = categoryRepos.existsById(categoryId)
 
-    if (!categoryOptional) {
+    if (!hasCategory) {
       throw IllegalArgumentException("invalid category id : $categoryId")
     }
 
@@ -47,6 +49,12 @@ class CategoryService(
         val (id, name, level, isLeaf, order) = it.key
         CategoryResponse(id, name, level, isLeaf, order, it.value.filterNotNull())
       }
+
+  @OptIn(ExperimentalStdlibApi::class)
+  fun findCategoryById(categoryId: Long): Category {
+    return categoryRepos.findById(categoryId).getOrNull()
+      ?: throw IllegalArgumentException("invalid category id : $categoryId")
+  }
 }
 
 /**
