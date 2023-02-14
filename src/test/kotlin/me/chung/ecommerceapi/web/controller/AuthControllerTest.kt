@@ -35,7 +35,8 @@ class AuthControllerTest(
       "홍길동",
       "example@google.com",
       "01012345678",
-      "password"
+      "password",
+      Role.MEMBER,
     )
 
     val response = performPost("/api/v1/auth/register", body).andReturn().response
@@ -76,7 +77,8 @@ class AuthControllerTest(
       "홍길동",
       "example@google.com",
       "01012345678",
-      "password"
+      "password",
+      Role.MEMBER,
     )
 
     val response = performPost("/api/v1/auth/register", body).andReturn().response

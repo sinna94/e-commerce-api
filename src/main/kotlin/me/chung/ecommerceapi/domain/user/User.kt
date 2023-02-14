@@ -34,7 +34,6 @@ class User(
   private val password: String,
 
   @Enumerated(EnumType.STRING)
-  @Transient
   val role: Role,
 
 ) : UserDetails, BaseEntity() {

@@ -1,7 +1,6 @@
 package me.chung.ecommerceapi.service
 
 import me.chung.ecommerceapi.config.JwtService
-import me.chung.ecommerceapi.domain.user.Role
 import me.chung.ecommerceapi.domain.user.User
 import me.chung.ecommerceapi.domain.user.UserRepos
 import me.chung.ecommerceapi.web.dto.AuthenticationRequest
@@ -22,7 +21,7 @@ class AuthService(
   private val authenticationManager: AuthenticationManager,
 ) {
   fun register(request: RegisterRequest): AuthenticationResponse {
-    val (loginId, name, email, phone, password) = request
+    val (loginId, name, email, phone, password, role) = request
 
     val user = userRepos.findByLoginId(loginId)
 
@@ -31,7 +30,7 @@ class AuthService(
     }
 
     val encodedPassword = passwordEncoder.encode(password)
-    val newUser = User(loginId, name, email, phone, null, encodedPassword, Role.MEMBER)
+    val newUser = User(loginId, name, email, phone, null, encodedPassword, role)
     userRepos.save(newUser)
     val jwtToken = jwtService.generateToken(newUser)
     return AuthenticationResponse(jwtToken)
@@ -42,7 +41,8 @@ class AuthService(
     authenticationManager.authenticate(
       UsernamePasswordAuthenticationToken(loginId, password)
     )
-    val user = userRepos.findByLoginId(loginId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found")
+    val user =
+      userRepos.findByLoginId(loginId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found")
     val token = jwtService.generateToken(user)
     return AuthenticationResponse(token)
   }

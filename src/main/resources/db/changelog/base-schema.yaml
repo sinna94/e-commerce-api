@@ -214,3 +214,16 @@ databaseChangeLog:
                   constraints:
                     foreignKeyName: fk_category
                     references: category(id)
+  - changeSet:
+      id: user-role
+      author: chunghyun
+      changes:
+        - addColumn:
+            tableName: user
+            columns:
+              - column:
+                  name: role
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+                  afterColumn: password
