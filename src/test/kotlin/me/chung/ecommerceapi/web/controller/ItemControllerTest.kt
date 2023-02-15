@@ -31,7 +31,7 @@ class ItemControllerTest(
   }
 
   @Test
-  @WithMockUser("seller", roles = ["SELLER"])
+  @WithMockUser("seller", authorities = ["SELLER"])
   fun addItemWithSeller() {
 
     val topCategory1 = categoryRepos.save(
@@ -53,7 +53,7 @@ class ItemControllerTest(
   }
 
   @Test
-  @WithMockUser("seller", roles = ["MEMBER"])
+  @WithMockUser("seller", authorities = ["MEMBER"])
   fun addItemWithMember() {
 
     val topCategory1 = categoryRepos.save(

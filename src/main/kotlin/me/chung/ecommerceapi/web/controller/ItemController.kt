@@ -31,10 +31,6 @@ class ItemController(
         description = "존재하지 않는 카테고리 아이디가 포함된 아이템 추가 시도",
         content = [Content(schema = Schema(implementation = ErrorResponse::class))]
       ),
-      ApiResponse(
-        responseCode = "403",
-        description = "Seller 가 아닌 계정으로 아이템 추가 시도",
-      ),
     ],
     description = "새로운 아이템 추가"
   )
