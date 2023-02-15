@@ -7,7 +7,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockHttpServletResponse
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user
 import org.springframework.test.context.TestConstructor
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
@@ -32,15 +31,11 @@ abstract class TestSupport {
     return objectMapper.writeValueAsString(value)
   }
 
-  fun performGet(url: String, params: Map<String, String>? = null, role: String? = null): ResultActions {
+  fun performGet(url: String, params: Map<String, String>? = null): ResultActions {
     var builder = getBuilder(MockMvcRequestBuilders::get, url)
 
     params?.forEach { (key, value) ->
       builder = builder.param(key, value)
-    }
-
-    role?.let {
-      builder = builder.with(user("user").roles(role))
     }
 
     return mockMvc.perform(builder)
@@ -60,6 +55,7 @@ abstract class TestSupport {
     body?.let {
       builder = builder.content(parseJson(body))
     }
+
     return mockMvc.perform(builder)
   }
 
