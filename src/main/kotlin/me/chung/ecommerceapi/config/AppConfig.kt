@@ -15,7 +15,7 @@ class AppConfig(
   @Bean
   fun userDetailsService(): UserDetailsService {
     return UserDetailsService { username ->
-      userRepos.findByLoginId(username) ?: throw UsernameNotFoundException("User not found")
+      userRepos.findByLoginId(username) ?: throw UsernameNotFoundException("User($username) not found")
     }
   }
 }

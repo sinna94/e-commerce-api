@@ -16,7 +16,7 @@ class Category(
   val categoryLevel: Short,
 
   @Column
-  val isLeaf: Boolean = false,
+  val isLeaf: Boolean? = false,
 
   @Column(nullable = false)
   val order: Short,

@@ -1,5 +1,6 @@
 package me.chung.ecommerceapi.config
 
+import me.chung.ecommerceapi.domain.user.Role
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
@@ -32,6 +33,9 @@ class SecurityConfig(
           .requestMatchers(
             "/swagger-ui/**", "/v3/api-docs/**", "/api/v1/auth/**", "/api/v1/category/**",
           ).permitAll()
+          .requestMatchers(
+            "/api/v1/items"
+          ).hasAuthority(Role.SELLER.name)
           .anyRequest()
           .authenticated()
           .and()

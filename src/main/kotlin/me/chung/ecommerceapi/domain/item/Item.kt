@@ -22,7 +22,7 @@ class Item(
 
   @ManyToOne(targetEntity = User::class, fetch = FetchType.LAZY)
   @JoinColumn(name = "seller", foreignKey = ForeignKey(name = "fk_seller"))
-  var seller: Long,
+  var seller: User,
 
   @Column
   var stopSelling: Boolean?,
@@ -35,5 +35,5 @@ class Item(
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(nullable = false)
-  var id: Long? = 0L
+  var id: Long = 0L
 }
