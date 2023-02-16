@@ -23,20 +23,10 @@ class ItemService(
     return ItemResponse(itemRepos.save(item))
   }
 
-  fun editItem(id: Long, editItemRequest: EditItemRequest, loginId: String): ItemResponse {
+  fun editItem(id: Long, loginId: String, editItemRequest: EditItemRequest): ItemResponse {
     val (title, price, contents, categoryId) = editItemRequest
 
-    val itemOptional = itemRepos.findById(id)
-
-    if (itemOptional.isEmpty) {
-      throw IllegalArgumentException("Item not found : $id")
-    }
-
-    val item = itemOptional.get()
-
-    if (item.seller.loginId != loginId) {
-      throw SecurityException("Item $id is not $loginId's item")
-    }
+    val item = getEditingTarget(id, loginId)
 
     title?.let {
       item.title = it
@@ -56,6 +46,30 @@ class ItemService(
     }
 
     return ItemResponse(item)
+  }
+
+  private fun getEditingTarget(id: Long, loginId: String): Item {
+    val itemOptional = itemRepos.findById(id)
+
+    if (itemOptional.isEmpty) {
+      throw IllegalArgumentException("Item not found : $id")
+    }
+
+    val item = itemOptional.get()
+
+    if (item.seller.loginId != loginId) {
+      throw SecurityException("Item $id is not $loginId's item")
+    }
+
+    return item
+  }
+
+  fun changeStopSelling(id: Long, loginId: String, stopSelling: Boolean): Boolean {
+    val item = getEditingTarget(id, loginId)
+
+    item.stopSelling = stopSelling
+
+    return item.stopSelling ?: false
   }
 }
 

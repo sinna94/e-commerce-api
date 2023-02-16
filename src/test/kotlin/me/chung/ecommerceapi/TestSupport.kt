@@ -69,6 +69,16 @@ abstract class TestSupport {
     return mockMvc.perform(builder)
   }
 
+  fun performPatch(url: String, params: Map<String, String>? = null): ResultActions {
+    var builder = getBuilder(MockMvcRequestBuilders::patch, url)
+
+    params?.forEach { (key, value) ->
+      builder = builder.param(key, value)
+    }
+
+    return mockMvc.perform(builder)
+  }
+
   final inline fun <reified T> toResult(response: MockHttpServletResponse): T {
     return toResult(response.contentAsString)
   }
