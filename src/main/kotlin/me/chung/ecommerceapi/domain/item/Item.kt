@@ -29,7 +29,7 @@ class Item(
 
   @ManyToOne(targetEntity = Category::class, fetch = FetchType.LAZY)
   @JoinColumn(name = "category_id", foreignKey = ForeignKey(name = "fk_category"))
-  val category: Category,
+  var category: Category,
 
 ) : BaseEntity() {
   @Id

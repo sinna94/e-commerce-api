@@ -53,7 +53,17 @@ abstract class TestSupport {
     var builder = getBuilder(MockMvcRequestBuilders::post, url)
 
     body?.let {
-      builder = builder.content(parseJson(body))
+      builder = builder.content(parseJson(it))
+    }
+
+    return mockMvc.perform(builder)
+  }
+
+  fun performPut(url: String, body: Any? = null): ResultActions {
+    var builder = getBuilder(MockMvcRequestBuilders::put, url)
+
+    body?.let {
+      builder = builder.content(parseJson(it))
     }
 
     return mockMvc.perform(builder)

@@ -16,11 +16,46 @@ class ItemService(
   private val itemRepos: ItemRepos,
 ) {
 
-  fun addItem(itemRequest: NewItemRequest, loginId: String): NewItemResponse {
+  fun addItem(itemRequest: NewItemRequest, loginId: String): ItemResponse {
     val seller = userService.findUserByLoginId(loginId)
     val category = categoryService.findCategoryById(itemRequest.categoryId)
     val item = itemRequest.toEntity(seller, category)
-    return NewItemResponse(itemRepos.save(item))
+    return ItemResponse(itemRepos.save(item))
+  }
+
+  fun editItem(id: Long, editItemRequest: EditItemRequest, loginId: String): ItemResponse {
+    val (title, price, contents, categoryId) = editItemRequest
+
+    val itemOptional = itemRepos.findById(id)
+
+    if (itemOptional.isEmpty) {
+      throw IllegalArgumentException("Item not found : $id")
+    }
+
+    val item = itemOptional.get()
+
+    if (item.seller.loginId != loginId) {
+      throw SecurityException("Item $id is not $loginId's item")
+    }
+
+    title?.let {
+      item.title = it
+    }
+
+    price?.let {
+      item.price = it
+    }
+
+    contents?.let {
+      item.contents = it
+    }
+
+    categoryId?.let {
+      val category = categoryService.findCategoryById(it)
+      item.category = category
+    }
+
+    return ItemResponse(item)
   }
 }
 
@@ -35,7 +70,14 @@ data class NewItemRequest(
   }
 }
 
-data class NewItemResponse(
+data class EditItemRequest(
+  val title: String? = null,
+  val price: BigInteger? = null,
+  val contents: String? = null,
+  val categoryId: Long? = null,
+)
+
+data class ItemResponse(
   val id: Long,
   val title: String,
   val price: BigInteger,

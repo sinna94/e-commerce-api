@@ -4,9 +4,10 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import me.chung.ecommerceapi.web.service.EditItemRequest
+import me.chung.ecommerceapi.web.service.ItemResponse
 import me.chung.ecommerceapi.web.service.ItemService
 import me.chung.ecommerceapi.web.service.NewItemRequest
-import me.chung.ecommerceapi.web.service.NewItemResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.ErrorResponse
@@ -24,7 +25,7 @@ class ItemController(
       ApiResponse(
         responseCode = "200",
         description = "아이템 추가 성공",
-        content = [Content(schema = Schema(implementation = NewItemResponse::class))]
+        content = [Content(schema = Schema(implementation = ItemResponse::class))]
       ),
       ApiResponse(
         responseCode = "400",
@@ -38,11 +39,26 @@ class ItemController(
   fun addItem(
     @RequestBody newItemRequest: NewItemRequest,
     @RequestAttribute loginId: String,
-  ): ResponseEntity<NewItemResponse> {
+  ): ResponseEntity<ItemResponse> {
     try {
       return ResponseEntity.ok(itemService.addItem(newItemRequest, loginId))
     } catch (e: IllegalArgumentException) {
       throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message)
+    }
+  }
+
+  @PutMapping("{id}")
+  fun editItem(
+    @PathVariable id: Long,
+    @RequestBody editItemRequest: EditItemRequest,
+    @RequestAttribute loginId: String,
+  ): ResponseEntity<ItemResponse> {
+    try {
+      return ResponseEntity.ok(itemService.editItem(id, editItemRequest, loginId))
+    } catch (e: IllegalArgumentException) {
+      throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message)
+    } catch (e: SecurityException) {
+      throw ResponseStatusException(HttpStatus.FORBIDDEN, e.message)
     }
   }
 }
