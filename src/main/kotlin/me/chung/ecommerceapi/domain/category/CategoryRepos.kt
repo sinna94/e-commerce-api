@@ -7,18 +7,18 @@ interface CategoryRepos : JpaRepository<Category, Long> {
 
   @Query(
     """
-      select new me.chung.ecommerceapi.domain.category.CategoryRelation(a.id, a.name, a.categoryLevel, a.isLeaf, a.order, b.id)
-      from Category a left join Category b on a.id = b.parentId
+      select a
+      from Category a left join fetch a.childCategory
       where a.categoryLevel = :categoryLevel
     """
   )
-  fun findByCategoryLevelAndOrderByOrder(categoryLevel: Short): Collection<CategoryRelation>
+  fun findByCategoryLevelAndOrderByOrder(categoryLevel: Short): Collection<Category>
 
   @Query(
     """
       select new me.chung.ecommerceapi.domain.category.CategoryRelation(a.id, a.name, a.categoryLevel, a.isLeaf, a.order)
       from Category a
-      where a.parentId = :id
+      where a.parentCategory.id = :id
     """
   )
   fun findByCategoryRelationById(id: Long): List<CategoryRelation>

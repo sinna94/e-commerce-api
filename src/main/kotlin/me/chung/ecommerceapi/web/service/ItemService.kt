@@ -2,8 +2,11 @@ package me.chung.ecommerceapi.web.service
 
 import me.chung.ecommerceapi.domain.category.Category
 import me.chung.ecommerceapi.domain.item.Item
+import me.chung.ecommerceapi.domain.item.ItemQueryRepos
 import me.chung.ecommerceapi.domain.item.ItemRepos
 import me.chung.ecommerceapi.domain.user.User
+import me.chung.ecommerceapi.web.controller.SearchQuery
+import me.chung.ecommerceapi.web.controller.SortType
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigInteger
@@ -14,6 +17,7 @@ class ItemService(
   private val categoryService: CategoryService,
   private val userService: UserService,
   private val itemRepos: ItemRepos,
+  private val itemQueryRepos: ItemQueryRepos,
 ) {
 
   fun addItem(itemRequest: NewItemRequest, loginId: String): ItemResponse {
@@ -70,6 +74,10 @@ class ItemService(
     item.stopSelling = stopSelling
 
     return item.stopSelling ?: false
+  }
+
+  fun searchAll(searchQuery: SearchQuery, sortType: SortType, offset: Long, limit: Long): List<ItemResponse> {
+    return itemQueryRepos.findItems(searchQuery, sortType, offset, limit).map { ItemResponse(it) }
   }
 }
 

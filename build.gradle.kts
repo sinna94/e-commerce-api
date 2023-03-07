@@ -2,12 +2,16 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
+  val kotlinVersion = "1.7.22"
+
   id("org.springframework.boot") version "3.0.1"
   id("io.spring.dependency-management") version "1.1.0"
-  kotlin("jvm") version "1.7.22"
-  kotlin("plugin.spring") version "1.7.22"
-  kotlin("plugin.jpa") version "1.7.22"
+  kotlin("jvm") version kotlinVersion
+  kotlin("plugin.spring") version kotlinVersion
+  kotlin("plugin.jpa") version kotlinVersion
   id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
+  kotlin("kapt") version kotlinVersion
+  idea
 }
 
 group = "me.chung"
@@ -35,6 +39,9 @@ dependencies {
   implementation("org.springdoc:springdoc-openapi-starter-common:2.0.2")
   implementation("org.springdoc:springdoc-openapi-security:1.6.14")
   implementation("org.liquibase:liquibase-core")
+  implementation("com.querydsl:querydsl-core:5.0.0")
+  implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
+  kapt("com.querydsl:querydsl-apt:5.0.0:jakarta")
   developmentOnly("org.springframework.boot:spring-boot-devtools")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.security:spring-security-test")
@@ -58,4 +65,12 @@ tasks.withType<Test> {
 
 tasks.withType<BootJar> {
   archiveFileName.set("${project.name}.jar")
+}
+
+idea {
+  module {
+    val kaptMain = file("build/generated/source/kapt/main")
+    sourceDirs.add(kaptMain)
+    generatedSourceDirs.add(kaptMain)
+  }
 }

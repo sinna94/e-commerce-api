@@ -19,7 +19,7 @@ import java.net.URI
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @AutoConfigureMockMvc
-abstract class TestSupport {
+abstract class MvcMockTestSupport {
 
   @Autowired
   private lateinit var mockMvc: MockMvc

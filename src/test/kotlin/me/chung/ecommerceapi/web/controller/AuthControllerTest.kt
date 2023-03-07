@@ -1,6 +1,6 @@
 package me.chung.ecommerceapi.web.controller
 
-import me.chung.ecommerceapi.TestSupport
+import me.chung.ecommerceapi.MvcMockTestSupport
 import me.chung.ecommerceapi.config.JwtService
 import me.chung.ecommerceapi.domain.user.Role
 import me.chung.ecommerceapi.domain.user.User
@@ -19,7 +19,7 @@ class AuthControllerTest(
   private val userRepos: UserRepos,
   private val passwordEncoder: BCryptPasswordEncoder,
   private val jwtService: JwtService,
-) : TestSupport() {
+) : MvcMockTestSupport() {
 
   @BeforeEach
   fun setUp() {

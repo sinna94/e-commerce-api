@@ -227,3 +227,24 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                   afterColumn: password
+  - changeSet:
+      id: category-path
+      author: chunghyun
+      changes:
+        - addColumn:
+            tableName: category
+            columns:
+              - column:
+                  name: path
+                  type: varchar(10)
+                  afterColumn: parent_id
+  - changeSet:
+      id: category-fk
+      author: chunghyun
+      changes:
+        - addForeignKeyConstraint:
+            constraintName: parent_category_fk
+            baseColumnNames: parent_id
+            baseTableName: category
+            referencedColumnNames: id
+            referencedTableName: category

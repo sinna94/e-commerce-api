@@ -3,7 +3,6 @@ package me.chung.ecommerceapi.web.service
 import com.fasterxml.jackson.annotation.JsonProperty
 import io.swagger.v3.oas.annotations.media.Schema
 import me.chung.ecommerceapi.domain.category.Category
-import me.chung.ecommerceapi.domain.category.CategoryRelation
 import me.chung.ecommerceapi.domain.category.CategoryRepos
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -38,16 +37,23 @@ class CategoryService(
   }
 
   private fun findTopLevelCategoryResponse(): List<CategoryResponse> {
-    return toCategoryResponseList(categoryRepos.findByCategoryLevelAndOrderByOrder(TOP_LEVEL))
+    return categoryRepos.findByCategoryLevelAndOrderByOrder(TOP_LEVEL).run { toCategoryResponseList(this) }
   }
 
-  private fun toCategoryResponseList(categoryRelations: Collection<CategoryRelation>) =
+  private fun toCategoryResponseList(categoryRelations: Collection<Category>) =
     categoryRelations
-      .groupBy({ it }) { it.parentId }
+      .groupBy({ it }) { it.parentCategory?.id }
       .entries
       .map {
-        val (id, name, level, isLeaf, order) = it.key
-        CategoryResponse(id, name, level, isLeaf, order, it.value.filterNotNull())
+        val category = it.key
+        CategoryResponse(
+          category.id,
+          category.name,
+          category.categoryLevel,
+          category.isLeaf ?: false,
+          category.order,
+          it.value.filterNotNull()
+        )
       }
 
   @OptIn(ExperimentalStdlibApi::class)

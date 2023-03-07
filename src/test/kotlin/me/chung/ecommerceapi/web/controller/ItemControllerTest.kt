@@ -1,6 +1,6 @@
 package me.chung.ecommerceapi.web.controller
 
-import me.chung.ecommerceapi.TestSupport
+import me.chung.ecommerceapi.MvcMockTestSupport
 import me.chung.ecommerceapi.domain.category.Category
 import me.chung.ecommerceapi.domain.category.CategoryRepos
 import me.chung.ecommerceapi.domain.item.Item
@@ -23,7 +23,7 @@ class ItemControllerTest(
   private val itemRepos: ItemRepos,
   private val categoryRepos: CategoryRepos,
   private val userRepos: UserRepos,
-) : TestSupport() {
+) : MvcMockTestSupport() {
 
   @BeforeEach
   fun setUp() {
@@ -44,7 +44,7 @@ class ItemControllerTest(
       Category("c1", 0, false, 0)
     )
     val category = categoryRepos.save(
-      Category("c3", 1, true, 0, topCategory1.id)
+      Category("c3", 1, true, 0).also { it.addParentCategory(topCategory1) }
     )
 
     val newItemRequest = NewItemRequest(
@@ -73,7 +73,7 @@ class ItemControllerTest(
       Category("c1", 0, false, 0)
     )
     val category = categoryRepos.save(
-      Category("c3", 1, true, 0, topCategory1.id)
+      Category("c3", 1, true, 0).also { it.addParentCategory(topCategory1) }
     )
 
     val newItemRequest = NewItemRequest(
@@ -191,5 +191,23 @@ class ItemControllerTest(
 
     val response = performPatch("/api/v1/items/${item.id}", mapOf("stopSelling" to "true")).andReturn().response
     assertEquals(403, response.status)
+  }
+
+  @Test
+  @WithMockUser("seller", authorities = ["SELLER"])
+  @DisplayName("존재하지 않는 상품 판매 여부 수정 테스트")
+  fun changeStopSellingNotExistItemTest() {
+    val user = userRepos.save(
+      User("seller", "sellerName", "email", "phone", null, "password", Role.SELLER)
+    )
+
+    val category = categoryRepos.save(
+      Category("category1", 0, true, 0)
+    )
+
+    val item = itemRepos.save(Item("item", BigInteger.TEN, "contents", user, false, category))
+
+    val response = performPatch("/api/v1/items/${item.id + 1}", mapOf("stopSelling" to "true")).andReturn().response
+    assertEquals(400, response.status)
   }
 }

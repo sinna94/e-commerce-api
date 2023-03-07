@@ -20,12 +20,26 @@ class Category(
 
   @Column(nullable = false)
   val order: Short,
-
-  @Column
-  val parentId: Long? = null,
 ) : BaseEntity() {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(nullable = false)
   var id: Long = 0L
+
+  @ManyToOne(targetEntity = Category::class, fetch = FetchType.LAZY)
+  @JoinColumn(name = "parent_id", foreignKey = ForeignKey(name = "parent_category_fk"))
+  var parentCategory: Category? = null
+    private set
+
+  @OneToMany(mappedBy = "parentCategory")
+  val childCategory: List<Category> = emptyList()
+
+  @Column(length = 10)
+  var path: String? = null
+    private set
+
+  fun addParentCategory(category: Category) {
+    parentCategory = category
+    path = if (category.path == null) "${category.id}." else "${category.path}${category.id}."
+  }
 }
